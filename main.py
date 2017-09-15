@@ -17,13 +17,18 @@ params['ModelParams']['prototxtTrain']=os.path.join(basePath,'Prototxt/train_noP
 params['ModelParams']['prototxtTest']=os.path.join(basePath,'Prototxt/test_noPooling_ResNet_cinque.prototxt')
 params['ModelParams']['snapshotON']=86000
 params['ModelParams']['snapshotOFF']=94000
+params['ModelParams']['snapshotONOFF']=118000
+
 params['ModelParams']['dirTrainOFF']=os.path.join(basePath,'Dataset/Train/OFF')
 params['ModelParams']['dirTrainON']=os.path.join(basePath,'Dataset/Train/ON')
 params['ModelParams']['dirTest']=os.path.join(basePath,'Dataset/TBP')
 params['ModelParams']['dirResult']=os.path.join(basePath,'ResultsON') #where we need to save the results (relative to the base path)
 params['ModelParams']['dirResult2']=os.path.join(basePath,'ResultsOFF') #where we need to save the results (relative to the base path)
+params['ModelParams']['dirResult3']=os.path.join(basePath,'ResultsONOFF') #where we need to save the results (relative to the base path)
 params['ModelParams']['dirSnapshotsON']=os.path.join(basePath,'Models/SnapshotsON/') #where to save the models while training
 params['ModelParams']['dirSnapshotsOFF']=os.path.join(basePath,'Models/SnapshotsOFF/') #where to save the models while training
+params['ModelParams']['dirSnapshotsONOFF']=os.path.join(basePath,'Models/SnapshotsONOFF/') #where to save the models while training
+
 params['ModelParams']['batchsize'] = 1  #the batchsize
 params['ModelParams']['numIterations'] = 100000 #the number of iterations
 params['ModelParams']['baseLR'] = 0.001 #the learning rate, initial one
@@ -50,3 +55,7 @@ if len(test) > 0:
 test2 = [i for i, j in enumerate(sys.argv) if j == '-test2'] ##########OFF
 if len(test2) > 0:
     model.test2()
+
+test3 = [i for i, j in enumerate(sys.argv) if j == '-test3'] ##########ON and OFF
+if len(test3) > 0:
+    model.test3()

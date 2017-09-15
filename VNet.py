@@ -355,4 +355,61 @@ class VNet(object):
 	
          #   self.dataManagerTest.writeResultsFromNumpyLabel(np.squeeze(labelmap),key)
 
+    def test3(self):
+        self.dataManagerTest = DM.DataManager(self.params['ModelParams']['dirTest'], self.params['ModelParams']['dirResult3'], self.params['DataManagerParams'])
+        self.dataManagerTest.loadTestData()
+
+        net = caffe.Net(self.params['ModelParams']['prototxtTest'],
+                        os.path.join(self.params['ModelParams']['dirSnapshotsONOFF'],"_iter_" + str(self.params['ModelParams']['snapshotONOFF']) + ".caffemodel"),
+                        caffe.TEST)
+
+        numpyImages = self.dataManagerTest.getNumpyImages()
+#        originNumpy = self.dataManagerTest.getNumpyImages()
+        for key in numpyImages:
+            mean = np.mean(numpyImages[key][numpyImages[key]>0])
+            std = np.std(numpyImages[key][numpyImages[key]>0])
+
+            numpyImages[key] -= mean
+            numpyImages[key] /= std
+
+        results = dict()
+
+        for key in numpyImages:
+
+            btch = np.reshape(numpyImages[key],[1,1,numpyImages[key].shape[0],numpyImages[key].shape[1],numpyImages[key].shape[2]])
+            net.blobs['data'].data[...] = btch
+	    print numpyImages[key].shape	
+            out = net.forward()
+            l = out["labelmap"]
+            print l.shape
+            labelmap = np.squeeze(l[0,1,:,:,:])
+	    res = np.squeeze(labelmap)
+	    res = np.transpose(res, [2, 1,0])
+	    res = np.transpose(res, [1,0,2])		
+            w = sitk.ImageFileWriter()
+	    filename,ext = splitext(key)
+	    
+	  #  io.imsave("/home/quan/Desktop/VNet/Results/" + filename + "_rotate" + ext,np.squeeze(res))	
+           # w.Execute(labelmap)
+         #   results[key] = np.squeeze(labelmap)
+	 #   print "write result"	
+	 #   toWrite = sitk.GetImageFromArray(results[key],isVector=False)
+#	    toWrite = sitk.Cast(toWrite, sitk.sitkUInt8)
+            writer = sitk.ImageFileWriter()
+         #   filename, ext = splitext(key)
+            writer.SetFileName(os.path.join(self.params['ModelParams']['dirResult3'],filename + "_rotate" + ext))
+         #   writer.Execute(toWrite)
+	 #   original = np.squeeze(oribatch[0,0,:,:,:])
+            im2 = sitk.GetImageFromArray(np.squeeze(res), isVector=False)
+	    im2 = sitk.Cast(sitk.RescaleIntensity(im2), sitk.sitkUInt8)
+        #    writer.SetFileName("/home/quan/Desktop/VNet/TrainResult/" + filename + "_original" + ext)
+            writer.Execute(im2)
+        #    mean = np.squeeze(btch[0,0,:,:,:])
+        #    toW = sitk.GetImageFromArray(mean, isVector=False)
+        #    toW = sitk.Cast(toW, sitk.sitkUInt16)
+        #    writer.SetFileName("/home/quan/Desktop/VNet/Results6/" + filename + "_mean" + ext)
+         #   writer.Execute(toW)
+
+	
+         #   self.dataManagerTest.writeResultsFromNumpyLabel(np.squeeze(labelmap),key)
 

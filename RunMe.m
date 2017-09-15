@@ -1,6 +1,10 @@
 %%%%%%%%%%%%%%MATLAB SCript to Automatically Detect chAT Surfaces%%%%%%%%%
+tic
 clear all
 close all
+
+addpath(genpath('/media/areca_raid/VNet'))
+
 path1 = getenv('PATH');
 path1 = [path1 ':/usr/local/cuda-8.0/bin:/usr/local/cuda-8.0/bin:/opt/conda/bin:/bin:/usr/bin:/usr/X11R6/bin:/usr/local/bin'];
 setenv('PATH',path1);
@@ -65,8 +69,9 @@ system('python main.py -test'); %%detect ON
 pause(1);
 system('python main.py -test2');  %%detect OFF
 pause(1);
-
-%STEP 3%%%%%%%%%%Resample to Original Size%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+system('python main.py -test3');  %%detect OFF
+pause(1);
+%STEP 3%%%%%%%%%%Resample to Original Size and Detect ON, OFF%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 clear all
 close all;
 files = dir('/media/areca_raid/VNet/ImagesHere/*chAT_STD.tif');
@@ -74,8 +79,12 @@ for file = files'
     FileTif = file.name;
     fname = strrep(FileTif,'chAT_STD.tif','');
     cnnname = strcat(fname, 'chAT_STD_rotate.tif');
-    
-    if exist(strcat('/media/areca_raid/VNet/ResultsON/',cnnname), 'file') == 2
+    InfoImage=imfinfo(strcat('/media/areca_raid/VNet/ImagesHere/',FileTif));  %this is dst image to project to
+    nx=InfoImage(1).Width;
+    nz=InfoImage(1).Height;
+    ny=length(InfoImage);
+    if exist(strcat('/media/areca_raid/VNet/ResultsON/',cnnname), 'file') == 2 &&  exist(strcat('/media/areca_raid/VNet/ResultsOFF/',cnnname), 'file') == 2
+
         %FileTif = '00505_2R_C01_chAT_STD.tif'
         InfoImage=imfinfo(strcat('/media/areca_raid/VNet/ResultsON/',cnnname));
         mImage=InfoImage(1).Width;
@@ -90,10 +99,7 @@ for file = files'
         end
         TifLink.close();
         
-        InfoImage=imfinfo(strcat('/media/areca_raid/VNet/ImagesHere/',FileTif));  %this is dst image to project to
-        nx=InfoImage(1).Width;
-        nz=InfoImage(1).Height;
-        ny=length(InfoImage);
+
         
         [y x z]=...
             ndgrid(linspace(1,size(cnnim,1),ny),...
@@ -103,19 +109,8 @@ for file = files'
         imcnnOutON=interp3(double(cnnim),x,y,z, 'spline');
         imcnnOutON = uint8(imcnnOutON);
         
-        
-%%%%%%%%%%%CAll functions that detect ON %%%%%%%%%%%%%
-        DetectONSurface(imcnnOutON, cnnname);
-                
-        %%%%%%UNCOMMENT TO DOUBLE CHECK THE RESULT BY WRITING TO FILE%%%%%%%%%%%%%%%
-       % name = strcat('/media/areca_raid/VNet/Results/',cnnname);
-       % imwrite(imcnnOutON(:,:,1), name);
-       % for k = 2:size(imcnnOutON,3)
-       %     imwrite(imcnnOutON(:,:,k), name , 'writemode', 'append');
-       % end        
-    end
-%%%%%%%%%%%%%%%%%%%resize the OFF image and call detectOFF%%%%%%%%%%%%%%
-    if exist(strcat('/media/areca_raid/VNet/ResultsOFF/',cnnname), 'file') == 2
+       
+    %%%%%Same thing for OFF%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %FileTif = '00505_2R_C01_chAT_STD.tif'
         InfoImage=imfinfo(strcat('/media/areca_raid/VNet/ResultsOFF/',cnnname));
         mImage=InfoImage(1).Width;
@@ -129,11 +124,7 @@ for file = files'
             cnnim(:,:,i)=TifLink.read();
         end
         TifLink.close();
-        
-        InfoImage=imfinfo(strcat('/media/areca_raid/VNet/ImagesHere/',FileTif));  %this is dst image to project to
-        nx=InfoImage(1).Width;
-        nz=InfoImage(1).Height;
-        ny=length(InfoImage);
+
         
         [y x z]=...
             ndgrid(linspace(1,size(cnnim,1),ny),...
@@ -142,14 +133,40 @@ for file = files'
         
         imcnnOutOFF = interp3(double(cnnim),x,y,z, 'spline');
         imcnnOutOFF = uint8(imcnnOutOFF);
-    
-        DetectOFFSurface(imcnnOutOFF, cnnname);
+      
+        %%%%%%%%%%%%%%%%%call Detect ON, OFF 
+        DetectONOFFSurface2(imcnnOutON, imcnnOutOFF,cnnname);
+ 
     end
-
+  
 %%%%%%%%%%%%%%%%%%%%%%%%to double check%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%        
-%%%%%%%%%%%Call a function to detect both ON and OFF%%%%%%%%%%%%%%%%%%%%%%%        
+%%%%%%%%%%%Call another function to detect both ON and OFF%%%%%%%%%%%%%%%%%%%%%%%        
 %%%%%%%%%%%%%%%%%%%%%%%%%not yet implemented%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%        
 	%DetectONandOFFSurface(imcnnOut, cnnname);
+    if exist(strcat('/media/areca_raid/VNet/ResultsONOFF/',cnnname), 'file') == 2
+        %FileTif = '00505_2R_C01_chAT_STD.tif'
+        InfoImage=imfinfo(strcat('/media/areca_raid/VNet/ResultsONOFF/',cnnname));
+        mImage=InfoImage(1).Width;
+        nImage=InfoImage(1).Height;
+        NumberImages=length(InfoImage);
+        
+        cnnim = zeros(nImage, mImage, NumberImages, 'uint8');
+        TifLink = Tiff(strcat('/media/areca_raid/VNet/ResultsONOFF/',cnnname), 'r');
+        for i=1:NumberImages
+            TifLink.setDirectory(i);
+            cnnim(:,:,i)=TifLink.read();
+        end
+        TifLink.close();
+        
+        [y x z]=...
+            ndgrid(linspace(1,size(cnnim,1),ny),...
+            linspace(1,size(cnnim,2),nx),...
+            linspace(1,size(cnnim,3),nz));
+        
+        imcnnOutONOFF = interp3(double(cnnim),x,y,z, 'spline');
+        imcnnOutONOFF = uint8(imcnnOutONOFF);
+        DetectONOFFSurface(imcnnOutONOFF, cnnname);
+    end
 
 end
 
@@ -157,4 +174,5 @@ end
 cd('/media/areca_raid/VNet/Dataset/TBP');
 delete *.tif
 
+toc
 

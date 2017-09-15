@@ -1,9 +1,9 @@
-function [] = DetectOFFSurface(im, name)
+function [vzmesh] = DetectOFFSurface(im, name)
 %STEP 5%%%%%%%%%%%%%%%%SURFACE OFF DETECTION%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %files = dir('/home/quan/Desktop/VNet/Results/*_rotate.tif');
 %for file = files'
 FileTif = name;
-existfile = strrep(FileTif,'_rotate.tif','_validation_OFF.tif');
+existfile = strrep(FileTif,'_rotate.tif','_validation_ON_OFF_2.tif');
 if exist(strcat('/media/areca_raid/VNet/SurfacesDetected/',existfile), 'file') ~= 2
     %FileTif = '/home/quan/Desktop/VNet/Results/00643_1L_C05_chAT_STD_rotate.tif';
     %FileTif = '00505_2R_C01_chAT_STD.tif'
@@ -200,111 +200,111 @@ if exist(strcat('/media/areca_raid/VNet/SurfacesDetected/',existfile), 'file') ~
     % linearly (fast) interpolate to fine grid
     [xi,yi]=meshgrid(1:xMax,1:yMax); xi = xi'; yi = yi';
     vzmesh=interp2(xgrid,ygrid,zgrid,xi,yi,'*spline',mean(zgrid(:)));
-    vz = uint16(vzmesh);
+    %vz = uint16(vzmesh);
     
     
-    %mesh(vzmesh);hold on;mesh(vzmesh2);
-    
-    
-    %%%create groundtruth to test
-    %'/home/quan/Desktop/VNet/ImagesHere/*chAT_STD.tif'
-    orgname = strrep(FileTif,'_rotate.tif','');
-    orgname = strcat(orgname,'.tif');
-    orgname = strcat('/media/areca_raid/VNet/ImagesHere/',orgname);
-    
-    [a,b,c] = size(BW);
-    groundImage = zeros(c,b,a);
-    validationImage = zeros(c,b,a,'uint16');
-    tem=zeros(c,b,3);
-    TifLink = Tiff(orgname, 'r');
-    for i=1:a
-        TifLink.setDirectory(i);
-        validationImage(:,:,i)=TifLink.read();
-    end
-    TifLink.close();
-    % InfoImage=imfinfo(FileTif);
-    % mImage=InfoImage(1).Width;
-    % nImage=InfoImage(1).Height;
-    % NumberImages=length(InfoImage);
-    % im=zeros(nImage,mImage,NumberImages,'uint8');
-    [r c] = size(vz);
-    for i = 1:r
-        for j = 1:c
-            if vz(i,j) == 0
-                vz(i,j) = 1;
-            end
-            groundImage(i,j, vz(i,j)) = 255;
-            %validationImage(i,j,vz(i,j)) = 0;
-        end
-    end
-    
-    
-    %  [r c] = size(vz2);
-    %  for i = 1:r
-    %      for j = 1:c
-    %          if vz2(i,j) == 0
-    %              vz2(i,j) = 1;
-    %          end
-    %          groundImage(j,i,vz2(i,j)) = 255;
-    %          validationImage(j,i,vz2(i,j)) = 0;
-    %      end
-    %  end
-    
-    
-    %%%store mask to verify correctness%%%%%
-    %   maskName = strrep(FileTif,'_rotate.tif','_validation_Mask.tif');
-    %   maskName = strcat('/home/quan/Desktop/VNet/Validation/',maskName);
-    %   imwrite(groundImage(:,:,1), maskName);
-    %   for k = 2:size(groundImage,3)
-    %       imwrite(groundImage(:,:,k), maskName, 'writemode', 'append');
-    %   end
-    
-    
-    %%store overlay%%%
-    resultName = strrep(FileTif,'_rotate.tif','_validation_OFF.tif');
-    resultName = strcat('/media/areca_raid/VNet/SurfacesDetected/',resultName);
-    % resultName = strcat('/media/areca_raid/Quan/SurfacesDetected/',resultName);
-    %imwrite(validationImage(:,:,1), resultName);
-    %for k = 2:size(validationImage,3)
-    %    imwrite(validationImage(:,:,k), resultName, 'writemode', 'append');
-    %end
-    
-    for i = 1:size(validationImage,3)
-        
-        %----- Add Raw as Grey -----%
-        tem(:,:,1) = validationImage(:,:,i) ./ 10;
-        tem(:,:,2) = validationImage(:,:,i) ./ 10;
-        tem(:,:,3) = validationImage(:,:,i) ./ 10;
-        
-        %----- Add CNN as Yellow -----%
-        tem(:,:,1) = tem(:,:,2) + groundImage(:,:,i);
-        tem(:,:,2) = tem(:,:,3) + groundImage(:,:,i);
-        
-        %----- Normalize -----%
-        tem = tem ./ max(tem(:));
-        
-        %----- Save -----%
-        if i == 1
-            imwrite(tem, resultName);
-        else
-            imwrite(tem, resultName, 'writemode', 'append');
-        end
-    end
-
-    %%store surfaces%%%
-    %   ONmat = strrep(FileTif,'_rotate.tif','_ON.mat');
-    %   ONmat = strcat('/media/areca_raid/Quan/SurfacesDetected/',ONmat);
-    OFFmat = strrep(FileTif,'_rotate.tif','_OFF.mat');
-    OFFmat = strcat('/media/areca_raid/VNet/SurfacesDetected/',OFFmat);
-    %   save(ONmat, 'vzmesh');
-     save(OFFmat, 'vzmesh');    
-    clear im
-    clear tem
-    clear groundImage
-    clear validationImage
-    clear BW
-    clear vz
-    clear vzmesh
+%     %mesh(vzmesh);hold on;mesh(vzmesh2);
+%     
+%     
+%     %%%create groundtruth to test
+%     %'/home/quan/Desktop/VNet/ImagesHere/*chAT_STD.tif'
+%     orgname = strrep(FileTif,'_rotate.tif','');
+%     orgname = strcat(orgname,'.tif');
+%     orgname = strcat('/media/areca_raid/VNet/ImagesHere/',orgname);
+%     
+%     [a,b,c] = size(BW);
+%     groundImage = zeros(c,b,a);
+%     validationImage = zeros(c,b,a,'uint16');
+%     tem=zeros(c,b,3);
+%     TifLink = Tiff(orgname, 'r');
+%     for i=1:a
+%         TifLink.setDirectory(i);
+%         validationImage(:,:,i)=TifLink.read();
+%     end
+%     TifLink.close();
+%     % InfoImage=imfinfo(FileTif);
+%     % mImage=InfoImage(1).Width;
+%     % nImage=InfoImage(1).Height;
+%     % NumberImages=length(InfoImage);
+%     % im=zeros(nImage,mImage,NumberImages,'uint8');
+%     [r c] = size(vz);
+%     for i = 1:r
+%         for j = 1:c
+%             if vz(i,j) == 0
+%                 vz(i,j) = 1;
+%             end
+%             groundImage(i,j, vz(i,j)) = 255;
+%             %validationImage(i,j,vz(i,j)) = 0;
+%         end
+%     end
+%     
+%     
+%     %  [r c] = size(vz2);
+%     %  for i = 1:r
+%     %      for j = 1:c
+%     %          if vz2(i,j) == 0
+%     %              vz2(i,j) = 1;
+%     %          end
+%     %          groundImage(j,i,vz2(i,j)) = 255;
+%     %          validationImage(j,i,vz2(i,j)) = 0;
+%     %      end
+%     %  end
+%     
+%     
+%     %%%store mask to verify correctness%%%%%
+%     %   maskName = strrep(FileTif,'_rotate.tif','_validation_Mask.tif');
+%     %   maskName = strcat('/home/quan/Desktop/VNet/Validation/',maskName);
+%     %   imwrite(groundImage(:,:,1), maskName);
+%     %   for k = 2:size(groundImage,3)
+%     %       imwrite(groundImage(:,:,k), maskName, 'writemode', 'append');
+%     %   end
+%     
+%     
+%     %%store overlay%%%
+%     resultName = strrep(FileTif,'_rotate.tif','_validation_OFF.tif');
+%     resultName = strcat('/media/areca_raid/VNet/SurfacesDetected/',resultName);
+%     % resultName = strcat('/media/areca_raid/Quan/SurfacesDetected/',resultName);
+%     %imwrite(validationImage(:,:,1), resultName);
+%     %for k = 2:size(validationImage,3)
+%     %    imwrite(validationImage(:,:,k), resultName, 'writemode', 'append');
+%     %end
+%     
+%     for i = 1:size(validationImage,3)
+%         
+%         %----- Add Raw as Grey -----%
+%         tem(:,:,1) = validationImage(:,:,i) ./ 10;
+%         tem(:,:,2) = validationImage(:,:,i) ./ 10;
+%         tem(:,:,3) = validationImage(:,:,i) ./ 10;
+%         
+%         %----- Add CNN as Yellow -----%
+%         tem(:,:,1) = tem(:,:,2) + groundImage(:,:,i);
+%         tem(:,:,2) = tem(:,:,3) + groundImage(:,:,i);
+%         
+%         %----- Normalize -----%
+%         tem = tem ./ max(tem(:));
+%         
+%         %----- Save -----%
+%         if i == 1
+%             imwrite(tem, resultName);
+%         else
+%             imwrite(tem, resultName, 'writemode', 'append');
+%         end
+%     end
+% 
+%     %%store surfaces%%%
+%     %   ONmat = strrep(FileTif,'_rotate.tif','_ON.mat');
+%     %   ONmat = strcat('/media/areca_raid/Quan/SurfacesDetected/',ONmat);
+%     OFFmat = strrep(FileTif,'_rotate.tif','_OFF.mat');
+%     OFFmat = strcat('/media/areca_raid/VNet/SurfacesDetected/',OFFmat);
+%     %   save(ONmat, 'vzmesh');
+%      save(OFFmat, 'vzmesh');    
+%     clear im
+%     clear tem
+%     clear groundImage
+%     clear validationImage
+%     clear BW
+   % clear vz
+   % clear vzmesh
     clear OFFX
     clear OFFY
     clear OFFZ
