@@ -20,7 +20,7 @@ if exist(strcat('/media/areca_raid/VNet/SurfacesDetected/',existfile), 'file') ~
         %        im(:,:,i)=TifLink.read();
         a = mat2gray(im(:,:,i));
         %T = adaptthresh(a,0.9);
-    %BW = imbinarize(a,T)
+        %BW = imbinarize(a,T)
         BW(:,:,i)= imbinarize(a,0.7);
     end
     %    TifLink.close();
@@ -41,9 +41,9 @@ if exist(strcat('/media/areca_raid/VNet/SurfacesDetected/',existfile), 'file') ~
     %rgb = label2rgb(L(:,:,i), 'jet', [.7 .7 .7], 'shuffle');
     %imshow(rgb)
     %end
-
+    
     for i=1:NumberImages
-     
+        
         sliceONx  = zeros(10000,1);
         sliceONy = zeros(10000,1);
         sliceONz = zeros(10000,1);
@@ -74,7 +74,7 @@ if exist(strcat('/media/areca_raid/VNet/SurfacesDetected/',existfile), 'file') ~
             tempy = zeros(6,1); %init at every col
             tempz = zeros(6,1);
             tempsize = zeros(6,1);
- 
+            
             %tic
             for rowpix = 1:r
                 if L(rowpix,colpix) ~= 0
@@ -93,74 +93,74 @@ if exist(strcat('/media/areca_raid/VNet/SurfacesDetected/',existfile), 'file') ~
             end
             
             if count == 2
-                if slicePtsON == 1 
+                if slicePtsON == 1
                     %%%%initially, first 2 points just pick ...
-                        sliceONx(slicePtsON) = tempx(1);
-                        sliceONy(slicePtsON) = tempy(1);
-                        sliceONz(slicePtsON) = tempz(1);
-                        slicePtsON = slicePtsON + 1;
-                        if ~ismember(L(tempx(1),tempy(1)),GROUPON(:))
-                            GROUPON(groupONcount) = L(tempx(1),tempy(1));
-                            groupONcount = groupONcount + 1;
-                        end
-                        ONX(ptONnum) = tempx(1);
-                        ONY(ptONnum) = tempy(1);
-                        ONZ(ptONnum) = tempz(1);
-                        ptONnum = ptONnum + 1;
-                                         
-                end
-                if  slicePtsOFF == 1 
-                        sliceOFFx(slicePtsOFF) = tempx(2);
-                        sliceOFFy(slicePtsOFF) = tempy(2);
-                        sliceOFFz(slicePtsOFF) = tempz(2);
-                        slicePtsOFF = slicePtsOFF + 1;
+                    sliceONx(slicePtsON) = tempx(1);
+                    sliceONy(slicePtsON) = tempy(1);
+                    sliceONz(slicePtsON) = tempz(1);
+                    slicePtsON = slicePtsON + 1;
+                    if ~ismember(L(tempx(1),tempy(1)),GROUPON(:))
+                        GROUPON(groupONcount) = L(tempx(1),tempy(1));
+                        groupONcount = groupONcount + 1;
+                    end
+                    ONX(ptONnum) = tempx(1);
+                    ONY(ptONnum) = tempy(1);
+                    ONZ(ptONnum) = tempz(1);
+                    ptONnum = ptONnum + 1;
                     
-                        if ~ismember(L(tempx(2),tempy(2)),GROUPOFF(:))
-                            GROUPOFF(groupOFFcount) = L(tempx(2),tempy(2));
-                            groupOFFcount = groupOFFcount + 1;
-                        end
-                        OFFX(ptOFFnum) = tempx(2);
-                        OFFY(ptOFFnum) = tempy(2);
-                        OFFZ(ptOFFnum) = tempz(2);
-                        %groundImage(ONX(ptONnum),ONY(ptONnum),ONZ(ptONnum)) = 255 ;
-                        ptOFFnum = ptOFFnum + 1;
                 end
-                    %%if more pts now, check 
-%                     if ptONnum > 1 && abs(tempx(1) - ONX(ptONnum - 1)) < 10
-%                         sliceONx(slicePtsON) = tempx(1);
-%                         sliceONy(slicePtsON) = tempy(1);
-%                         sliceONz(slicePtsON) = tempz(1);
-%                         slicePtsON = slicePtsON + 1;
-%                         if ~ismember(L(tempx(1),tempy(1)),GROUPON(:))
-%                             GROUPON(groupONcount) = L(tempx(1),tempy(1));
-%                             groupONcount = groupONcount + 1;
-%                         end
-%                         ONX(ptONnum) = tempx(1);
-%                         ONY(ptONnum) = tempy(1);
-%                         ONZ(ptONnum) = tempz(1);
-%                         ptONnum = ptONnum + 1;
-%                     end
-%                     if ptOFFnum > 1 && abs(tempx(2) - OFFX(ptOFFnum - 1)) < 10
-%                         sliceOFFx(slicePtsOFF) = tempx(2);
-%                         sliceOFFy(slicePtsOFF) = tempy(2);
-%                         sliceOFFz(slicePtsOFF) = tempz(2);
-%                         slicePtsOFF = slicePtsOFF + 1;
-%                     
-%                     
-%                         if ~ismember(L(tempx(2),tempy(2)),GROUPOFF(:))
-%                             GROUPOFF(groupOFFcount) = L(tempx(2),tempy(2));
-%                             groupOFFcount = groupOFFcount + 1;
-%                         end
-%                         OFFX(ptOFFnum) = tempx(2);
-%                         OFFY(ptOFFnum) = tempy(2);
-%                         OFFZ(ptOFFnum) = tempz(2);
-%                         %groundImage(ONX(ptONnum),ONY(ptONnum),ONZ(ptONnum)) = 255 ;
-%                         ptOFFnum = ptOFFnum + 1;
-%                     end
-               
+                if  slicePtsOFF == 1
+                    sliceOFFx(slicePtsOFF) = tempx(2);
+                    sliceOFFy(slicePtsOFF) = tempy(2);
+                    sliceOFFz(slicePtsOFF) = tempz(2);
+                    slicePtsOFF = slicePtsOFF + 1;
+                    
+                    if ~ismember(L(tempx(2),tempy(2)),GROUPOFF(:))
+                        GROUPOFF(groupOFFcount) = L(tempx(2),tempy(2));
+                        groupOFFcount = groupOFFcount + 1;
+                    end
+                    OFFX(ptOFFnum) = tempx(2);
+                    OFFY(ptOFFnum) = tempy(2);
+                    OFFZ(ptOFFnum) = tempz(2);
+                    %groundImage(ONX(ptONnum),ONY(ptONnum),ONZ(ptONnum)) = 255 ;
+                    ptOFFnum = ptOFFnum + 1;
+                end
+                %%if more pts now, check
+                %                     if ptONnum > 1 && abs(tempx(1) - ONX(ptONnum - 1)) < 10
+                %                         sliceONx(slicePtsON) = tempx(1);
+                %                         sliceONy(slicePtsON) = tempy(1);
+                %                         sliceONz(slicePtsON) = tempz(1);
+                %                         slicePtsON = slicePtsON + 1;
+                %                         if ~ismember(L(tempx(1),tempy(1)),GROUPON(:))
+                %                             GROUPON(groupONcount) = L(tempx(1),tempy(1));
+                %                             groupONcount = groupONcount + 1;
+                %                         end
+                %                         ONX(ptONnum) = tempx(1);
+                %                         ONY(ptONnum) = tempy(1);
+                %                         ONZ(ptONnum) = tempz(1);
+                %                         ptONnum = ptONnum + 1;
+                %                     end
+                %                     if ptOFFnum > 1 && abs(tempx(2) - OFFX(ptOFFnum - 1)) < 10
+                %                         sliceOFFx(slicePtsOFF) = tempx(2);
+                %                         sliceOFFy(slicePtsOFF) = tempy(2);
+                %                         sliceOFFz(slicePtsOFF) = tempz(2);
+                %                         slicePtsOFF = slicePtsOFF + 1;
+                %
+                %
+                %                         if ~ismember(L(tempx(2),tempy(2)),GROUPOFF(:))
+                %                             GROUPOFF(groupOFFcount) = L(tempx(2),tempy(2));
+                %                             groupOFFcount = groupOFFcount + 1;
+                %                         end
+                %                         OFFX(ptOFFnum) = tempx(2);
+                %                         OFFY(ptOFFnum) = tempy(2);
+                %                         OFFZ(ptOFFnum) = tempz(2);
+                %                         %groundImage(ONX(ptONnum),ONY(ptONnum),ONZ(ptONnum)) = 255 ;
+                %                         ptOFFnum = ptOFFnum + 1;
+                %                     end
+                
                 
                 if slicePtsON > 1
-                    if abs(tempx(1) - sliceONx(slicePtsON - 1)) < 10
+                    if abs(tempx(1) - sliceONx(slicePtsON - 1)) < 15
                         sliceONx(slicePtsON) = tempx(1);
                         sliceONy(slicePtsON) = tempy(1);
                         sliceONz(slicePtsON) = tempz(1);
@@ -180,7 +180,7 @@ if exist(strcat('/media/areca_raid/VNet/SurfacesDetected/',existfile), 'file') ~
                 end
                 
                 if slicePtsOFF > 1
-                    if abs(tempx(2) - sliceOFFx(slicePtsOFF - 1)) < 10
+                    if abs(tempx(2) - sliceOFFx(slicePtsOFF - 1)) < 15
                         sliceOFFx(slicePtsOFF) = tempx(2);
                         sliceOFFy(slicePtsOFF) = tempy(2);
                         sliceOFFz(slicePtsOFF) = tempz(2);
@@ -283,16 +283,16 @@ if exist(strcat('/media/areca_raid/VNet/SurfacesDetected/',existfile), 'file') ~
     ONY = ONY(ONY~=0);
     ONZ = ONZ(ONZ~=0);
     
-%     Data = [ONX, ONY, ONZ];
-%     datanum = size(ONX,1);
-%     datanum = round((datanum/100)*30);
-%     Data = datasample(Data,datanum);
-%     %ONY = datasample(ONY,datanum);
-%     %ONZ = datasample(ONZ,datanum);
-%     %
-%     ONX= Data(:,1);
-%     ONY = Data(:,2);
-%     ONZ = Data(:,3);
+    %     Data = [ONX, ONY, ONZ];
+    %     datanum = size(ONX,1);
+    %     datanum = round((datanum/100)*30);
+    %     Data = datasample(Data,datanum);
+    %     %ONY = datasample(ONY,datanum);
+    %     %ONZ = datasample(ONZ,datanum);
+    %     %
+    %     ONX= Data(:,1);
+    %     ONY = Data(:,2);
+    %     ONZ = Data(:,3);
     z = ONX;
     y = ONY;
     x = ONZ;
@@ -302,23 +302,23 @@ if exist(strcat('/media/areca_raid/VNet/SurfacesDetected/',existfile), 'file') ~
     % linearly (fast) interpolate to fine grid
     [xi,yi]=meshgrid(1:xMax,1:yMax); xi = xi'; yi = yi';
     vzmesh=interp2(xgrid,ygrid,zgrid,xi,yi,'*spline',mean(zgrid(:)));
-    vz = uint16(vzmesh);
+    
     
     
     OFFX = OFFX(OFFX~=0);
     OFFY = OFFY(OFFY~=0);
     OFFZ = OFFZ(OFFZ~=0);
     
-%     Data = [OFFX, OFFY, OFFZ];
-%     datanum = size(OFFX,1);
-%     datanum = round((datanum/100)*30);
-%     Data = datasample(Data,datanum);
-%     %ONY = datasample(ONY,datanum);
-%     %ONZ = datasample(ONZ,datanum);
-%     %
-%     OFFX= Data(:,1);
-%     OFFY = Data(:,2);
-%     OFFZ = Data(:,3);
+    %     Data = [OFFX, OFFY, OFFZ];
+    %     datanum = size(OFFX,1);
+    %     datanum = round((datanum/100)*30);
+    %     Data = datasample(Data,datanum);
+    %     %ONY = datasample(ONY,datanum);
+    %     %ONZ = datasample(ONZ,datanum);
+    %     %
+    %     OFFX= Data(:,1);
+    %     OFFY = Data(:,2);
+    %     OFFZ = Data(:,3);
     
     z2 = OFFX;
     y2 = OFFY;
@@ -329,15 +329,29 @@ if exist(strcat('/media/areca_raid/VNet/SurfacesDetected/',existfile), 'file') ~
     % linearly (fast) interpolate to fine grid
     [xi2,yi2]=meshgrid(1:xMax2,1:yMax2); xi2 = xi2'; yi2 = yi2';
     vzmesh2=interp2(xgrid2,ygrid2,zgrid2,xi2,yi2,'*spline',mean(zgrid2(:)));
-    vz2 = uint16(vzmesh2);
+    
     %mesh(vzmesh);hold on;mesh(vzmesh2);
     
     
+    diff = vzmesh2 - vzmesh;
+    B = diff<0;
+    [a b] = size(B);
+    for i = 1:a
+        for j = 1:b
+            if B(i,j) == 1
+                temp = vzmesh2(i,j);
+                vzmesh2(i,j) = vzmesh(i,j);
+                vzmesh(i,j) = temp;
+            end
+        end
+    end
+    vz = uint16(vzmesh);
+    vz2 = uint16(vzmesh2);
     %%%create groundtruth to test
     %'/home/quan/Desktop/VNet/ImagesHere/*chAT_STD.tif'
     orgname = strrep(FileTif,'_rotate.tif','');
     orgname = strcat(orgname,'.tif');
-    orgname = strcat('/home/quan/Desktop/VNet/ImagesHere/',orgname);
+    orgname = strcat('/media/areca_raid/VNet/ImagesHere/',orgname);
     
     [a,b,c] = size(BW);
     groundImage = zeros(c,b,a);
@@ -361,21 +375,22 @@ if exist(strcat('/media/areca_raid/VNet/SurfacesDetected/',existfile), 'file') ~
                 vz(i,j) = 1;
             end
             groundImage(i,j, vz(i,j)) = 255;
+            if vz2(i,j) == 0
+                vz2(i,j) = 1;
+            end
+            groundImage(i,j,vz2(i,j)) = 255;
             %validationImage(i,j,vz(i,j)) = 0;
         end
     end
     
     
-      [r c] = size(vz2);
-      for i = 1:r
-          for j = 1:c
-              if vz2(i,j) == 0
-                  vz2(i,j) = 1;
-              end
-              groundImage(i,j,vz2(i,j)) = 255;
-    %          validationImage(j,i,vz2(i,j)) = 0;
-          end
-      end
+ %   [r c] = size(vz2);
+ %   for i = 1:r
+ %       for j = 1:c
+            
+            %          validationImage(j,i,vz2(i,j)) = 0;
+ %       end
+  %  end
     
     
     %%%store mask to verify correctness%%%%%

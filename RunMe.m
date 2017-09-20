@@ -69,8 +69,8 @@ system('python main.py -test'); %%detect ON
 pause(1);
 system('python main.py -test2');  %%detect OFF
 pause(1);
-system('python main.py -test3');  %%detect OFF
-pause(1);
+%system('python main.py -test3');  %%detect OFF
+%pause(1);
 %STEP 3%%%%%%%%%%Resample to Original Size and Detect ON, OFF%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 clear all
 close all;
@@ -143,30 +143,30 @@ for file = files'
 %%%%%%%%%%%Call another function to detect both ON and OFF%%%%%%%%%%%%%%%%%%%%%%%        
 %%%%%%%%%%%%%%%%%%%%%%%%%not yet implemented%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%        
 	%DetectONandOFFSurface(imcnnOut, cnnname);
-    if exist(strcat('/media/areca_raid/VNet/ResultsONOFF/',cnnname), 'file') == 2
-        %FileTif = '00505_2R_C01_chAT_STD.tif'
-        InfoImage=imfinfo(strcat('/media/areca_raid/VNet/ResultsONOFF/',cnnname));
-        mImage=InfoImage(1).Width;
-        nImage=InfoImage(1).Height;
-        NumberImages=length(InfoImage);
-        
-        cnnim = zeros(nImage, mImage, NumberImages, 'uint8');
-        TifLink = Tiff(strcat('/media/areca_raid/VNet/ResultsONOFF/',cnnname), 'r');
-        for i=1:NumberImages
-            TifLink.setDirectory(i);
-            cnnim(:,:,i)=TifLink.read();
-        end
-        TifLink.close();
-        
-        [y x z]=...
-            ndgrid(linspace(1,size(cnnim,1),ny),...
-            linspace(1,size(cnnim,2),nx),...
-            linspace(1,size(cnnim,3),nz));
-        
-        imcnnOutONOFF = interp3(double(cnnim),x,y,z, 'spline');
-        imcnnOutONOFF = uint8(imcnnOutONOFF);
-        DetectONOFFSurface(imcnnOutONOFF, cnnname);
-    end
+%     if exist(strcat('/media/areca_raid/VNet/ResultsONOFF/',cnnname), 'file') == 2
+%         %FileTif = '00505_2R_C01_chAT_STD.tif'
+%         InfoImage=imfinfo(strcat('/media/areca_raid/VNet/ResultsONOFF/',cnnname));
+%         mImage=InfoImage(1).Width;
+%         nImage=InfoImage(1).Height;
+%         NumberImages=length(InfoImage);
+%         
+%         cnnim = zeros(nImage, mImage, NumberImages, 'uint8');
+%         TifLink = Tiff(strcat('/media/areca_raid/VNet/ResultsONOFF/',cnnname), 'r');
+%         for i=1:NumberImages
+%             TifLink.setDirectory(i);
+%             cnnim(:,:,i)=TifLink.read();
+%         end
+%         TifLink.close();
+%         
+%         [y x z]=...
+%             ndgrid(linspace(1,size(cnnim,1),ny),...
+%                         linspace(1,size(cnnim,2),nx),...
+%             linspace(1,size(cnnim,3),nz));
+% %        
+%         imcnnOutONOFF = interp3(double(cnnim),x,y,z, 'spline');
+%         imcnnOutONOFF = uint8(imcnnOutONOFF);
+%         DetectONOFFSurface(imcnnOutONOFF, cnnname);
+%     end
 
 end
 
