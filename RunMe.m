@@ -69,8 +69,13 @@ system('python main.py -test'); %%detect ON
 pause(1);
 system('python main.py -test2');  %%detect OFF
 pause(1);
+<<<<<<< HEAD
 %system('python main.py -test3');  %%detect OFF
 %pause(1);
+=======
+system('python main.py -test3');  %%detect ON OFF together
+pause(1);
+>>>>>>> cdc961d2f9a1e31fb55da65f5c626764b97691a2
 %STEP 3%%%%%%%%%%Resample to Original Size and Detect ON, OFF%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 clear all
 close all;
