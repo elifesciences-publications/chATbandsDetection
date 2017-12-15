@@ -1,9 +1,12 @@
+# Contents
+This git repository is a copy of the VNet folder on areca drive.
+
 # To Run the Network on Test Data:
 
 ## -Step 1: Running the Network to Detect the ON and OFF surfaces 
 + First, put all the images to be processed (STD Tiff stacks of chAT Bands) into the ImagesHere folder.
 
-+ Then, open Matlab, make sure Matlab has included all the folders and subfolders inside of VNet, and run the script RunMe.m
++ Then, open Matlab, make sure Matlab has included (add to path) all the folders and subfolders inside of VNet, and run the script RunMe.m
 
 + After the Matlab script has finished running, the 2 chAT surfaces will be stored in SurfacesDectected Folder, plus a Tiff file containing the ON and OFF surfaces detected by the Network overlay on top of the Original Tiff file.
 
